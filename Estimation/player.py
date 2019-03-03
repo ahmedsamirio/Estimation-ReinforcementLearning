@@ -21,7 +21,7 @@ class Player:
             return None
         self.bid_no = int(input('Enter no. of tricks\n'))
         self.bid_suit = input('Enter suit\n')
-        if self.bid_no > max_no and self.suit_ranks.index(self.bid_suit) >= self.suit_ranks.index(max_suit):
+        if self.bid_no > max_no:
             return (self.name, self.bid_suit, self.bid_no)
 
         return None

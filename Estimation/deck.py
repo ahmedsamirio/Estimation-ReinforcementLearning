@@ -10,6 +10,7 @@ class Deck:
 
     # a method to shuffle the deck
     def shuffle(self):
+        self.new_deck()
         random.shuffle(self.cards)
 
     # a method to deal cards to each player on at a time
@@ -26,3 +27,6 @@ class Deck:
 
     def convert_indices(self, cards):
         return [self.indices[card] for card in cards]
+
+    def trump_indices(self, trump_suit):
+        return [self.indices[card] for card in cards if trump_suit in card]

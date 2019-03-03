@@ -14,12 +14,14 @@ class Game:
         self.scoreboard = Scoreboard()
 
     def start_game(self):
-        self.round.deal_to_players()
-        self.round.bidding()
-        self.round.play()
-        self.round.post_round_multi()
-        self.scoreboard.update_scores(self.round.bids, self.round.tricks, self.round.multi, self.players_orders,
-                                      self.round.saydah)
+        for _ in range(18):
+            self.reset()
+            self.round.deal_to_players()
+            self.round.bidding()
+            self.round.play()
+            self.round.post_round_multi()
+            self.scoreboard.update_scores(self.round.bids, self.round.tricks, self.round.multi, self.players_orders,
+                                          self.round.saydah)
 
     def reset(self):
         self.round = Round(self.players, self.deck)
@@ -52,7 +54,6 @@ class Round:
                 if player.player_choice():
                     pass
                 else:
-                    self.deck.new_deck()
                     self.deal_to_players()
 
     # a method which starts bidding in the beginning of the round
@@ -70,6 +71,7 @@ class Round:
         highest_player_index = self.players.index(self.highest_bid[0])
         self.multi[self.players[highest_player_index]].append('bidder')  # multiplier to player with highest bid
         self.trump_suit = self.highest_bid[1]
+        # TODO Need to add a way to include null trump suit when making the neural networks
         for _ in range(highest_player_index):  # reorder the players so that the highest bidder starts first
             self.players.insert(3, self.players.pop(0))
 
@@ -137,5 +139,8 @@ class Round:
                 card = player.play()
                 cards.append(card)
             cards = self.deck.convert_indices(cards)
+            trump_cards = self.deck.trump_indices(self.trump_suit)
+            if trump_suit:
+                cards = [card if card in trump_cards else 0  for card in cards]
             winning_player = self.players[np.argmax(cards)]
             self.tricks[winning_player] += 1
