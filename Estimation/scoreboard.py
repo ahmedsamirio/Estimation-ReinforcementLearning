@@ -1,19 +1,19 @@
 import numpy as np
 
+
 class Scoreboard:
     """ A simple representation of an estimation scoreboard """
 
     def __init__(self):
         self.scores = np.zeros((1, 4))
 
-
     def update_scores(self, estimated, actual, multi, order, saydah=False):
-        X = np.zeros((1, 4)) # main points
-        Y = np.zeros((1, 4)) # extra points
-        Z = np.ones((1, 4)) # bidding multipliers
-        W = 2 if saydah else 1 # Sa'ydah multiplier
+        X = np.zeros((1, 4))  # main points
+        Y = np.zeros((1, 4))  # extra points
+        Z = np.ones((1, 4))  # bidding multipliers
+        W = 2 if saydah else 1  # Sa'ydah multiplier
 
-        for player, idx in order.items(): # Main points
+        for player, idx in order.items():  # Main points
             player_estimated = estimated[player]
             player_actual = actual[player]
             if player_actual == player_estimated:

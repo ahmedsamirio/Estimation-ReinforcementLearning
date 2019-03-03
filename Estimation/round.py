@@ -8,30 +8,36 @@ class Game:
     """ A class representing a full estimation game """
 
     def __init__(self):
-        # TODO
-        pass
+        self.deck = Deck()
+        self.players = [Player(name, self.deck) for name in 'ABCD']
+        self.players_orders = {player: index for index, player in enumerate(self.players)}
+        self.scoreboard = Scoreboard()
 
     def start_game(self):
-        # TODO
-        pass
+        self.round.deal_to_players()
+        self.round.bidding()
+        self.round.play()
+        self.round.post_round_multi()
+        self.scoreboard.update_scores(self.round.bids, self.round.tricks, self.round.multi, self.players_orders,
+                                      self.round.saydah)
 
-    def calculate_score(self):
-        # TODO
-        pass
+    def reset(self):
+        self.round = Round(self.players, self.deck)
 
 
 class Round:
     """ A class representing a round of estimation card game """
 
-    def __init__(self):
-        self.deck = Deck()
-        self.players = [Player(name, self.deck) for name in 'ABCD']
-        self.players_orders = {player: index for index, player in enumerate(self.players)}
-        self.trump_suit = ''  # To be decide during bidding
+    def __init__(self, players, deck):
+        self.deck = deck
+        self.players = players
+        self.trump_suit = ''  # To be decided during bidding
+        self.highest_bid = 0 # To be decided during bidding
         self.bids = {}  # maps each player to his expected bids
         self.tricks = {player: 0 for player in self.players}  # maps each players to his recorded tricks
         self.multi = self.multi = {player: [] for player in self.players}  # maps each players to a list of multipliers
         self.scoreboard = Scoreboard()
+        self.saydah = False
 
     # a method to deal to players
     def deal_to_players(self):
@@ -55,11 +61,14 @@ class Round:
         max_no = 0  # record the lowest bid no.
         for player in self.players:  # loop over players to find the highest bid
             bid = player.bid(max_suit, max_no)  # if the bid didn't exceed the max it bid = None
+            if player.dash:
+                self.multi[player].append('dash')  # add dash multiplier to players who dashed
             if bid:
                 self.highest_bid = [player, bid[1], bid[2]]
                 max_suit = bid[1]
                 max_no = bid[2]
         highest_player_index = self.players.index(self.highest_bid[0])
+        self.multi[self.players[highest_player_index]].append('bidder')  # multiplier to player with highest bid
         self.trump_suit = self.highest_bid[1]
         for _ in range(highest_player_index):  # reorder the players so that the highest bidder starts first
             self.players.insert(3, self.players.pop(0))
@@ -83,6 +92,9 @@ class Round:
                         self.multi[player].append('risk')
                     elif bid + total_tricks > 15:
                         self.multi[player].append('doublerisk')
+                    else:
+                        self.multi[player].append('regular')
+
                 elif bid == 0:
                     self.multi[player].append('nocall')
 
@@ -100,8 +112,21 @@ class Round:
         print(self.players)
 
     def post_round_multi(self):
-        # TODO
-        pass
+        wins = 0
+        for player in self.players:
+            estimated = self.bids[player]
+            collected = self.tricks[player]
+            if estimated == collected:
+                player.won = True
+                wins += 1
+        if wins == 3:
+            for player in self.players:
+                self.multi[player].append('onlylose') if not player.won
+        elif wins == 1:
+            for player in self.players:
+                self.multi[player].append('onlywin') if player.won
+
+
 
     def play(self):
         # Simple for loops for each 13 mini-rounds with nested for loop to get the card from each player then
