@@ -35,7 +35,7 @@ class Estimation:
 		# deck of cards
 		self.deck = Cards()
 
-		# players bids, tricks and score multipliers
+		# players bids, tricks, score multipliers and scores
 		self.bids = defaultdict(list)
 		self.tricks = defaultdict(list)
 		self.multi = defaultdict(list)
@@ -51,19 +51,19 @@ class Estimation:
 		self.table_suit = ''
 		self.trump_suit = ''
 
-		# initialize observation state, action space and round no.
+		# current player order, and round no.
+		self.order = 0
+		self.round = 0
+
+		# initialize observation and action space
 		self.observation_space = Observation(self, self.state_func)
 		self.action_space = Action(self)
-		self.round = 0
 
 		# done flag, phase 1 flag, phase 2 flag and phase 3 flag
 		self.done = False
 		self.phase_1 = True
 		self.phase_2 = False
 		self.phase_3 = False
-
-		# current player order
-		self.order = 0
 
 		# deal cards to players
 		self.deal_to_players()

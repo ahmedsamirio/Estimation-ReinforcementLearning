@@ -24,10 +24,10 @@ def change_state(env):
     """
 
     player = env.current_player()
-    player_cards = self.players_cards[player]
+    player_cards = env.players_cards[player]
     player_cards_tokens = [env.deck.card_to_token[card] for card in player_cards]
     state = np.zeros(65,)
-    for token in player_cards:
+    for token in player_cards_tokens:
         state[token] = 1
     # if there are cards on the table
     if env.table:
@@ -37,29 +37,32 @@ def change_state(env):
     # if there are played cards
     if env.played:
         played_tokens = [env.deck.card_to_token[card] for card in env.played]
+        for token in played_tokens:
+            state[token] = 3
     
-    other_players = self.players[:].remove(player)
+    other_players = env.players[:]
+    other_players.remove(player)
 
     # if players finished the first and/or the second phase
     if env.bids:
-        state[52] = env.bids[player]
+        state[52] = env.bids[player] if not isinstance(env.bids[player], list) else 0
         for i, p in enumerate(other_players):
-            state[54+(i*2)] = env.bids[p]
+            state[54+(i*2)] = env.bids[p] if not isinstance(env.bids[player], list) else 0
     # if players collected any tricks
     if env.tricks:
         state[53] = sum(env.tricks[player])
         for i, p in enumerate(other_players):
-            state[55+(i*2)] = sum(env.bids[p])
+            state[55+(i*2)] = sum(env.tricks[p])
 
     # if there is a table suit
     if env.table_suit:
-        state[60] = env.deck.suits[env.table_suit]
+        state[60] = env.deck.suits.index(env.table_suit)
     else:
         state[60] = 4
     
     # if there is a trump suit
     if env.trump_suit:
-        state[61] = env.deck.suits[env.trump_suit]
+        state[61] = env.deck.suits.index(env.trump_suit)
     else:
         state[61] = 4
 

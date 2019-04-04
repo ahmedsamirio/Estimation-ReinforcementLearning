@@ -1,4 +1,4 @@
-from new import *
+from env import *
 
 env = Estimation(change_state, list('ABCD'))
 obs, done, info = env.reset()
@@ -10,5 +10,6 @@ while True:
 
     if done:
         print(env.record['scores'])
+        print(env.record[2])
         break
 
