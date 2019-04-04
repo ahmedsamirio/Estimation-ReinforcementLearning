@@ -20,13 +20,13 @@ def change_state(env):
         d) 3 encodes spades
         e) 4 encodes no suit
 
-    The last two elements [62:64] encode the total asked tricks and round no.
+    The last three elements [62:64] encode the total asked tricks, round no. and current player order
     """
 
     player = env.current_player()
     player_cards = self.players_cards[player]
     player_cards_tokens = [env.deck.card_to_token[card] for card in player_cards]
-    state = np.zeros(64,)
+    state = np.zeros(65,)
     for token in player_cards:
         state[token] = 1
     # if there are cards on the table
@@ -63,9 +63,10 @@ def change_state(env):
     else:
         state[61] = 4
 
-    # total asked tricks and round no.
+    # total asked tricks, round no. and current player order
     state[62] = env.total_tricks
     state[63] = env.round
+    state[64] = env.order
 
     return state
 
@@ -101,12 +102,12 @@ def calculate_estimations_over_steps(tricks):
 
     return correct_estimations
 
-def collective_estimation_calculation(players_tricks):
+def collective_estimation_calculation(env):
     """
     A function which calculates the tricks collected after each step in the game for all players
     """
     correct_estimations = {}
-    for i, tricks in players_tricks.items():
-        correct_estimations[i] = calculate_estimations_over_steps(tricks)
+    for player, tricks in env.tricks.items():
+        correct_estimations[player] = calculate_estimations_over_steps(tricks)
 
     return correct_estimations
