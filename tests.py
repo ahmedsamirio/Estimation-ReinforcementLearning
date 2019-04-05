@@ -27,10 +27,8 @@ class TestEstimation(unittest.TestCase):
         # test bidding with dash call
         env = Estimation()
         _, _, _ = env.reset()
-        
-
         env.bids['A'] = (0, 1)
-        env.bids['B'] = (4, 3)
+        env.bids['B'] = (3, 3)
         env.bids['C'] = (6, 2)
         env.bids['D'] = (5, 3)
         env.select_highest_bid()
@@ -41,6 +39,22 @@ class TestEstimation(unittest.TestCase):
         self.assertEqual(env.total_tricks, 6)
         self.assertIn('dash', env.multi['A'])
         self.assertTrue(env.dash)
+
+        env = Estimation()
+        _, _, _ = env.reset()
+        env.bids['A'] = (0, 1)
+        env.bids['B'] = (0, 3)
+        env.bids['C'] = (6, 2)
+        env.bids['D'] = (5, 3)
+        env.select_highest_bid()
+        self.assertEqual(env.players, ['C', 'D', 'A', 'B'])
+        self.assertEqual(env.multi['C'], ['bidder'])
+        self.assertEqual(env.highest_bid, 6)
+        self.assertEqual(env.trump_suit, 'H')
+        self.assertEqual(env.total_tricks, 6)
+        self.assertIn('dash', env.multi['A'])
+        self.assertTrue(env.dash)
+        self.assertEqual(env.players[env.last_player], 'D')
 
 
     def test_reorder_players(self):

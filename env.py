@@ -171,9 +171,15 @@ class Estimation:
 		for player, bid in self.bids.items():
 			# if a player dashed
 			if bid[0] == 0:
-				self.multi[player].append('dash')
-				self.dash = True  # initialize a dash flag 
-				self.dash_player = player
+				# if this was the first player to dash
+				if not self.dash:
+					self.multi[player].append('dash')
+					self.dash = True  # initialize a dash flag 
+					self.dash_players = list(player)
+				else:
+					self.multi[player].append('dash')
+					self.dash_players.append(player)
+
 			# if the player estimation exceeded the max one
 			elif bid[0] > max_est:
 				max_est = bid[0]
@@ -200,16 +206,21 @@ class Estimation:
 
 		# reinitialize order to start phase 2
 		if self.dash:
-			dash_player_order = self.players.index(self.dash_player)
-			if dash_player_order == 1:
-				self.order = 2
-				self.last_player = 3
-			elif dash_player_order == 2:
-				self.order = 1
-				self.dash_skip = 2
-				self.last_player = 3
-			elif dash_player_order == 3:
-				self.last_player = 2
+			if len(self.dash_players) == 1:
+				dash_player_order = self.players.index(self.dash_players[0])
+				if dash_player_order == 1:
+					self.order = 2
+					self.last_player = 3
+				elif dash_player_order == 2:
+					self.order = 1
+					self.dash_skip = 2
+					self.last_player = 3
+				elif dash_player_order == 3:
+					self.last_player = 2
+			else:
+				dash_players_order = set([self.players.index(player) for player in self.dash_players])
+				players_order = set([1, 2, 3])
+				self.last_player = players_order.difference(dash_players_order).pop()
 
 	def reorder_players(self, winner):
 		"""
