@@ -24,7 +24,7 @@ class Estimation:
 	""" 
 	A class representing a game of estimation
 	"""
-	def __init__(self, state_func, players):
+	def __init__(self, state_func=change_state, players=list('ABCD')):
 		self.state_func = state_func
 		self.players = players
 
@@ -64,6 +64,7 @@ class Estimation:
 		self.phase_1 = True
 		self.phase_2 = False
 		self.phase_3 = False
+		self.dash = False
 
 		# deal cards to players
 		self.deal_to_players()
@@ -96,7 +97,6 @@ class Estimation:
 			
 			else:  # if the bidding phase is over
 				self.select_highest_bid()
-				self.order = 1  # reinitialize order to start phase 2
 				self.record['bids'] = self.bids
 
 				# update flags
@@ -114,9 +114,12 @@ class Estimation:
 			player = self.current_player()
 
 			# if not the last player
-			if self.order < 3:
+			if self.order < self.last_player:
 				self.call(player, action)
 				self.order += 1
+				if self.dash:
+					if self.order == self.dash_skip:
+						self.order += 1
 			else:
 				self.call(player, action, last_player=True)
 				self.order = 0 
@@ -166,8 +169,13 @@ class Estimation:
 		
 		# loop over players bids
 		for player, bid in self.bids.items():
+			# if a player dashed
+			if bid[0] == 0:
+				self.multi[player].append('dash')
+				self.dash = True  # initialize a dash flag 
+				self.dash_player = player
 			# if the player estimation exceeded the max one
-			if bid[0] > max_est:
+			elif bid[0] > max_est:
 				max_est = bid[0]
 				max_trump = bid[1]
 				highest_player = player
@@ -189,6 +197,19 @@ class Estimation:
 		# reorder players and reintialize other players' bids for phase 2
 		self.reorder_players(highest_player)
 		self.reinitialize_bids(highest_player)
+
+		# reinitialize order to start phase 2
+		if self.dash:
+			dash_player_order = self.players.index(self.dash_player)
+			if dash_player_order == 1:
+				self.order = 2
+				self.last_player = 3
+			elif dash_player_order == 2:
+				self.order = 1
+				self.dash_skip = 2
+				self.last_player = 3
+			elif dash_player_order == 3:
+				self.last_player = 2
 
 	def reorder_players(self, winner):
 		"""
@@ -233,6 +254,8 @@ class Estimation:
 			9. trump_suit
 			8. played_cards: a list of played cards
 			9. scores
+
+			In case this was the last player's call, a flag will be included with a illegal estimation number
 		"""
 		info = {}
 		info['round'] = self.round
@@ -248,6 +271,9 @@ class Estimation:
 		info['played_cards'] = self.played
 		info['scores'] = self.scores
 
+		if self.phase_2 and self.current_player() is self.last_player:
+			info['last_call'] = True
+			info['illegal_call'] = 13 - self.total_tricks
 		return info
 
 	def update_record(self):
@@ -300,11 +326,11 @@ class Estimation:
 				else:
 					self.multi[player].append('regular')
 
-			elif call == 0:
-				self.multi[player].append('nocall')
+		if call == 0:
+			self.multi[player].append('nocall')
 
-			if call >= 8:
-				self.multi[player].append('>=8')
+		elif call >= 8:
+			self.multi[player].append('>=8')
 
 		self.bids[player] = call
 		self.total_tricks += call
