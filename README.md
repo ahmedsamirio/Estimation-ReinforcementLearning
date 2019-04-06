@@ -50,7 +50,8 @@ To know what's happening in the game, the info dict is provided. It contains inf
 Through this info dict, you are able to handcraft the observation the way you want and not stick to the observation supplied by the environment. 
 
 Alternatively, you can pass the class an argument with a function that return the obervation based on the attributes of the environment. For example, this is the class used by default.
-```def change_state(env):
+```
+def change_state(env):
     """
     A function which return the observation state of the current player
     The first 52 elements [0:52] are label encodings of the cards:
@@ -79,11 +80,13 @@ Alternatively, you can pass the class an argument with a function that return th
     state = np.zeros(65,)
     for token in player_cards_tokens:
         state[token] = 1
+        
     # if there are cards on the table
     if env.table:
         table_tokens = [env.deck.card_to_token[card] for card in env.table]
         for token in table_tokens:
             state[token] = 2
+            
     # if there are played cards
     if env.played:
         played_tokens = [env.deck.card_to_token[card] for card in env.played]
@@ -98,6 +101,7 @@ Alternatively, you can pass the class an argument with a function that return th
         state[52] = env.bids[player] if not isinstance(env.bids[player], list) else 0
         for i, p in enumerate(other_players):
             state[54+(i*2)] = env.bids[p] if not isinstance(env.bids[player], list) else 0
+            
     # if players collected any tricks
     if env.tricks:
         state[53] = sum(env.tricks[player])
