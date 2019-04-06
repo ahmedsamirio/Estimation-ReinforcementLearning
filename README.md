@@ -16,3 +16,9 @@ After the winner is determined, players are given a chance to estimate the numbe
 The winner of the bidding round leads the first trick and players must follow suit. Each trick is won by the highest card and the winner of each trick leads the next.
 Players unable to follow it have the option to use "trump" cards, which are considered the highest among other cards. The winner of the trick is the player who uses a trump, unless a higher trump is used.
 The round ends when players are out of cards.
+
+More information about scoring can be found here: https://www.jawaker.com/en/rules/estimation
+
+
+## How to use
+The environment was designed to be as close to OpenAI gym as possible. 
