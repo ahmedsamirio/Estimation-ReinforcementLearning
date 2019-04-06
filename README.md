@@ -160,3 +160,39 @@ The main attributes that you'd want to be using in making a state representation
     8. The round no.  (self.round)
     
     9. The current player order on the table  (self.order)
+
+
+## Caveats about the environment
+
+### Players
+
+When you create an instance of the environment, you have to argument which you can provied. The first one is the state function responsible for making crafting the currrent state of the environemnt, and a list of players.
+
+The default list supplied is ['A', 'B', 'C', 'D']. Now this is totally optional and you can change however you like. You can also use multiple neural networks, or only one network for all players. For example:
+```
+players = {'Bob': net(), 'Dick': net(), 'Gabe': net(), 'Elmo': net()}
+env = env.Estimation(players=players.keys())
+obs, done, info = env.reset()
+while True:
+    player = info['current_player']
+    action = players[player](obs)
+    action = process_action(action)
+    obs, done, info = env.step(action)
+    if done:
+        break
+```        
+        
+### Actions
+
+All actions passed to the environment should be tuples of 3 elements. The first element should be the card token, the second is the estimation, and the third is the trump suit token. 
+
+During the first phase, the 2nd and 3rd element are used. The second phase will only use the 2nd element, and the 3rd will use the first. 
+
+### Bids 
+
+During the first phase, the bids dictionary will contain (estimation, trump_token) tuples for each player. Therefore you should be wary while using it in the state representation.
+
+During the second phase, the bids dictionary will only contain the estimation number.
+
+For the sake of brevity let's call the first phase bidding, and the second calling. During calling, the last player isn't allowed to call a number that makes the total tricks equal 13, and so the info dictionary will contain a key with a flag only in the case that the current player is the last player in calling, and will contain a key supplying the illegal estimation. You can then tweak the function which return the estimation based on the nueral network output, for example, to return only a call from the legal ones.
+
