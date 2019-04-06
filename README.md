@@ -9,4 +9,5 @@ Estimation is a game for 4 players in which the standard international 52-card p
 
 ### Bidding
 The bidding is split into two phases. In the first phase, players bid in turn according to the estimated number of tricks they think they can get, or declare a "Dash Call", which means that the estimated number of tricks is zero. Players have to declare their trump suit along with their bid. The winner of the bidding round is the player who estimates the highest number of tricks. In case of a tie, the trump suit is used to determine the winner. The suits are ranked from high to low: No Trump (NT), Spades, Hearts, Diamonds, Clubs.
--After the winner is determined, players are given a chance to estimate the number of tricks they will get based on the trump suit that was selected. The maximum number of tricks a player can estimate is the number estimated by the winner of the bidding round.
+
+After the winner is determined, players are given a chance to estimate the number of tricks they will get based on the trump suit that was selected. The maximum number of tricks a player can estimate is the number estimated by the winner of the bidding round.
