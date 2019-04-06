@@ -194,5 +194,9 @@ During the first phase, the bids dictionary will contain (estimation, trump_toke
 
 During the second phase, the bids dictionary will only contain the estimation number.
 
-For the sake of brevity let's call the first phase bidding, and the second calling. During calling, the last player isn't allowed to call a number that makes the total tricks equal 13, and so the info dictionary will contain a key with a flag only in the case that the current player is the last player in calling, and will contain a key supplying the illegal estimation. You can then tweak the function which return the estimation based on the nueral network output, for example, to return only a call from the legal ones.
+For the sake of brevity let's call the first phase bidding, and the second calling. 
+
+During calling, the last player isn't allowed to call a number that makes the total tricks equal 13, and so the info dictionary will contain a key with a flag only in the case that the current player is the last player in calling, and will contain a key supplying the illegal estimation. 
+
+You can then tweak the function which return the estimation based on the nueral network output, for example, to return only a call from the legal ones.
 
