@@ -128,3 +128,16 @@ def change_state(env):
     return state
 
 ```
+
+This function is elementary, and other functions can be used to make more meaningful represenations of the current state of the environment using other techniques.
+
+The main attributes that you'd want to be using in making a state representation are:
+    1. The current player's cards  (self.players_cards[self.current_player()])
+    2. Cards on the table if any  (self.table)
+    3. Previously played cards if any  (self.played_cards)
+    4. The current player's bids and collected tricks  (self.bids[self.current_player()], self.tricks[self.current_player()])
+    5. Other players' bids and collected tricks  (self.bids, self.tricks)
+    6. Table and trump suits  (self.table_suit, self.trump_suit)
+    7. The total asked tricks from all players  (self.tricks)
+    8. The round no.  (self.round)
+    9. The current player order on the table  (self.order)
