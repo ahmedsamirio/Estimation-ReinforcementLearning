@@ -36,15 +36,25 @@ while True:
 ```
 
 To know what's happening in the game, the info dict is provided. It contains information about:
+
     1. The current player (current_player)
+    
     2. The current player cards (current_player_cards)
+    
     3. The order of the players (player_order)
+    
     4. The cards of all player (players_cards, this will be dictionary)
+    
     5. The players' bids (players_bids)
+    
     6. The cards on the table (table)
+    
     7. The suit of the table (table_suit)
+    
     8. The trump suit (trump_suit)
+    
     9. The played cards (played_cards)
+    
     10. The scores (scores, which are only updates at the end)
     
 Through this info dict, you are able to handcraft the observation the way you want and not stick to the observation supplied by the environment. 
@@ -132,12 +142,21 @@ def change_state(env):
 This function is elementary, and other functions can be used to make more meaningful represenations of the current state of the environment using other techniques.
 
 The main attributes that you'd want to be using in making a state representation are:
+
     1. The current player's cards  (self.players_cards[self.current_player()])
+    
     2. Cards on the table if any  (self.table)
+    
     3. Previously played cards if any  (self.played_cards)
+    
     4. The current player's bids and collected tricks  (self.bids[self.current_player()], self.tricks[self.current_player()])
+    
     5. Other players' bids and collected tricks  (self.bids, self.tricks)
+    
     6. Table and trump suits  (self.table_suit, self.trump_suit)
+    
     7. The total asked tricks from all players  (self.tricks)
+    
     8. The round no.  (self.round)
+    
     9. The current player order on the table  (self.order)
