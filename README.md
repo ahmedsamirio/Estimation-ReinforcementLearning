@@ -21,4 +21,17 @@ More information about scoring can be found here: https://www.jawaker.com/en/rul
 
 
 ## How to use
-The environment was designed to be as close to OpenAI gym as possible. 
+The environment was designed to be as close to OpenAI gym as possible. Each simulation will be just one round of a full game, ending with a calculation of scores.
+```
+import env
+env = env.Estimation()
+obs, done, info = env.reset()
+while True:
+    action = env.action_space.sample()
+    obs, done, info = env.step(action)
+    
+    if done:
+        print(env.scores)
+        break
+```
+
