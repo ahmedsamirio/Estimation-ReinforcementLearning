@@ -201,6 +201,7 @@ class Estimation:
 		# reorder players and reintialize other players' bids for phase 2
 		self.reorder_players(highest_player)
 		self.reinitialize_bids(highest_player)
+		self.last_player = 3
 
 		# reinitialize order to start phase 2
 		if self.dash:
