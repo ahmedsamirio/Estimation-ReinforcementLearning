@@ -56,7 +56,7 @@ Alternatively, you can pass the instance a function that return the current envi
 ```
 def change_state(env):
     """
-    A function which return the state of the current player as (63,) tensor
+    A function which return the state of the current player as (65,) tensor
     The first 52 elements [0:52] are label encodings of the cards:
         a) 0 - the card isn't played yet and isn't in hand
         b) 1 - the card is in hand
@@ -135,17 +135,15 @@ def change_state(env):
 This function is elementary, and other functions can be used to make more meaningful represenations of the current state of the environment using other techniques.
 
 The main attributes that you'd want to be using in making a state representation are:
-```
-    1. The current player's cards  (self.players_cards[self.current_player()]) 
-    2. Cards on the table if any  (self.table)
-    3. Previously played cards if any  (self.played_cards)
-    4. The current player's bids and collected tricks  (self.bids[self.current_player()], self.tricks[self.current_player()])
-    5. Other players' bids and collected tricks  (self.bids, self.tricks)
-    6. Table and trump suits  (self.table_suit, self.trump_suit)
-    7. The total asked tricks from all players  (self.tricks)
-    8. The round no.  (self.round)
-    9. The current player order on the table  (self.order)
-```
+1. The current player's cards  ```self.players_cards[self.current_player()]``` 
+2. Cards on the table if any  ```self.table```
+3. Previously played cards if any  ```self.played_cards```
+4. The current player's bids and collected tricks  ```self.bids[self.current_player()]``` ```self.tricks[self.current_player()]```
+5. Other players' bids and collected tricks  ```self.bids``` ```self.tricks```
+6. Table and trump suits  ```self.table_suit``` ```self.trump_suit```
+7. The total asked tricks from all players  ```self.tricks```
+8. The round no.  ```self.round```
+9. The current player order on the table  ```self.order```
 
 ## Caveats about the environment
 
@@ -153,7 +151,7 @@ The main attributes that you'd want to be using in making a state representation
 
 You can provide two arguments while calling an instance of the environment. The first one is the state function responsible for crafting the current player's state, and a list of players.
 
-The default list supplied is ['A', 'B', 'C', 'D']. This is totally optional and you can change it however you like. You can also use multiple neural networks, or only one network for all players. For example:
+The default list supplied is ```['A', 'B', 'C', 'D']```. This is totally optional and you can change it however you like. You can also use multiple neural networks, or only one network for all players. For example:
 ```
 players = {'Bob': Net(), 'Dick': Net(), 'Gabe': Net(), 'Elmo': Net()}
 env = env.Estimation(players=players.keys())
