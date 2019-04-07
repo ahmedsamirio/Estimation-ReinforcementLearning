@@ -53,86 +53,9 @@ To know what's happening in the game, the info dict is provided. It contains inf
 
 Through this info dict, you are able to handcraft the observation the way you want and not stick to the observation supplied by the environment. 
 
-Alternatively, you can pass the instance a function that return the current environment state based on it's attributes. For example, this is the class used by default.
+Alternatively, you can pass the instance a function that return the current environment state based on it's attributes. For example, you can take a look at the default function ```change_state``` at [`functions.py`](./functions.py)
 
-```
-def change_state(env):
-    """
-    A function which return the state of the current player as (65,) tensor
-    The first 52 elements [0:52] are label encodings of the cards:
-        a) 0 - the card isn't played yet and isn't in hand
-        b) 1 - the card is in hand
-        c) 2 - the card is on the table
-        d) 3 - the card has been played before
 
-    The next 8 elements [52:60] contain information about the bids and tricks
-        a) [52:54] - contains info about current player bids and tricks
-        b) [54:60] - contains info about other 3 players
-
-    The elements in [60:62] contain the table and trump suits label encodings
-        a) 0 encodes clubs
-        b) 1 encodes diamonds
-        c) 2 encodes hearts
-        d) 3 encodes spades
-        e) 4 encodes no suit
-
-    The last three elements [62:64] encode the total asked tricks, round no. and current player order
-    """
-
-    player = env.current_player()
-    player_cards = env.players_cards[player]
-    player_cards_tokens = [env.deck.card_to_token[card] for card in player_cards]
-    state = np.zeros(65,)
-    for token in player_cards_tokens:
-        state[token] = 1
-        
-    # if there are cards on the table
-    if env.table:
-        table_tokens = [env.deck.card_to_token[card] for card in env.table]
-        for token in table_tokens:
-            state[token] = 2
-            
-    # if there are played cards
-    if env.played:
-        played_tokens = [env.deck.card_to_token[card] for card in env.played]
-        for token in played_tokens:
-            state[token] = 3
-    
-    other_players = env.players[:]
-    other_players.remove(player)
-
-    # if players finished the first and/or the second phase
-    if env.bids:
-        state[52] = env.bids[player] if not isinstance(env.bids[player], list) else 0
-        for i, p in enumerate(other_players):
-            state[54+(i*2)] = env.bids[p] if not isinstance(env.bids[player], list) else 0
-            
-    # if players collected any tricks
-    if env.tricks:
-        state[53] = sum(env.tricks[player])
-        for i, p in enumerate(other_players):
-            state[55+(i*2)] = sum(env.tricks[p])
-
-    # if there is a table suit
-    if env.table_suit:
-        state[60] = env.deck.suits.index(env.table_suit)
-    else:
-        state[60] = 4
-    
-    # if there is a trump suit
-    if env.trump_suit:
-        state[61] = env.deck.suits.index(env.trump_suit)
-    else:
-        state[61] = 4
-
-    # total asked tricks, round no. and current player order
-    state[62] = env.total_tricks
-    state[63] = env.round
-    state[64] = env.order
-
-    return state
-
-```
 
 This function is elementary, and other functions can be used to make more meaningful represenations of the current state of the environment using other techniques.
 
