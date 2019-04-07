@@ -23,7 +23,13 @@ class Action:
             legal_cards = player_cards
 
         card = random.choice(legal_cards)
-        return [self.env.deck.card_to_token[card], np.random.choice(4), np.random.choice(4)]
+
+        if len(self.env.dash_players) == 2:
+            call = np.random.randint(1, 14)
+        else:
+            call = np.random.choice(14)
+
+        return [self.env.deck.card_to_token[card], call, np.random.choice(4)]
 
 
 

@@ -47,10 +47,7 @@ class Estimation:
 		self.table = []
 		self.played = []
 		self.total_tricks = 0
-		
-		# initialize observation and action space
-		self.observation_space = Observation(self, state_func)
-		self.action_space = Action(self)
+
 
 		# table suit and trump suit
 		self.table_suit = ''
@@ -59,6 +56,10 @@ class Estimation:
 		# current player order, and round no.
 		self.order = 0
 		self.round = 0
+		
+		# initialize observation and action space
+		self.observation_space = Observation(self, self.state_func)
+		self.action_space = Action(self)
 
 
 		# done flag, phase 1 flag, phase 2 flag and phase 3 flag
@@ -67,6 +68,7 @@ class Estimation:
 		self.phase_2 = False
 		self.phase_3 = False
 		self.dash = False
+		self.dash_players = []
 
 		# deal cards to players
 		self.deal_to_players()
@@ -213,6 +215,7 @@ class Estimation:
 				dash_player_order = self.players.index(self.dash_players[0])
 				if dash_player_order == 1:
 					self.order = 2
+					self.dash_skip = 1
 					self.last_player = 3
 				elif dash_player_order == 2:
 					self.order = 1
@@ -288,6 +291,10 @@ class Estimation:
 		if self.phase_2 and self.current_player() is self.last_player:
 			info['last_call'] = True
 			info['illegal_call'] = 13 - self.total_tricks
+
+		if self.phase_1 and len(self.dash_players) == 2:
+			info['last_call'] = True
+			info['illegal_call'] = 0
 		return info
 
 	def update_record(self):
@@ -506,7 +513,7 @@ class Estimation:
 					Y[i] -= 10
 
 			if '>=8' in self.multi[player]:
-				Z[idx] = 2
+				Z[i] = 2
 
 		scores = (X + Y) * Z + (X + Y) * (Z - 1)
 		for i, score in enumerate(scores):

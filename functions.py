@@ -83,9 +83,9 @@ def filter_legal_cards(card_probs, env):
     player = env.current_player()
     player_cards = env.players_cards[player]
     if env.table_suit:
-        legal_cards = [card for card in players_cards if card[1] == env.table_suit]
+        legal_cards = [card for card in player_cards if card[1] == env.table_suit]
         if not legal_cards:
-            legal_cards = players_cards
+            legal_cards = player_cards
     else:
         legal_cards = player_cards
     cards_tokens = [env.deck.card_to_token[card] for card in legal_cards]
