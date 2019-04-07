@@ -20,7 +20,7 @@ The round ends when players are out of cards.
 More information about scoring can be found here: https://www.jawaker.com/en/rules/estimation
 
 ## Installation
-Use ```git clone ``` or 
+Use ```git clone https://github.com/ahmedsamirio/Estimation-ReinforcementLearning.git```.
 
 ## Usage
 The environment was designed to be as close to OpenAI gym as possible. Each simulation will be just one round of a full game, ending with a calculation of scores.
