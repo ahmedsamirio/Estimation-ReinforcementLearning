@@ -131,3 +131,6 @@ You can then tweak the function which return the estimation based on the neural 
 The tricks are recorded for each player as 0 or 1 in a each round, so the ```self.tricks``` dict will contain lists. This has the advantage of letting you calculate the correct amount of tricks collected after each time step, providing more training data for calculation estimtaions.
 
 The function ```collective_estimation_calculation``` takes the ```self.tricks``` dict, and return another dict with the tricks collected after each step for each player.
+
+## Contributing
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.

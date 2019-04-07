@@ -90,7 +90,7 @@ def filter_legal_cards(card_probs, env):
         legal_cards = player_cards
     cards_tokens = [env.deck.card_to_token[card] for card in legal_cards]
     # filter card probabilties by their presence in the legal card tokens
-    legal_card_probs = [prob if i in card_tokens else 0 for i, prob in enumerate(card_probs)]
+    legal_card_probs = [prob if i in cards_tokens else 0 for i, prob in enumerate(card_probs)]
 
     return legal_card_probs
 
@@ -99,7 +99,7 @@ def filter_legal_calls(call_probs, info):
 	"""
 	A function which filters out legal calls
 	"""
-	if info['last_call']:
+	if info.get('last_call'):
 		call_probs = [prob for prob in call_probs if prob != info['illegal_call']]
 	
 	return call_probs
@@ -111,9 +111,12 @@ def process_action(action, env, info):
 	"""
 	card_probs, call_probs, trump_probs = action
 	legal_card_probs = filter_legal_cards(card_probs, env)
-	legal_call_probs = filter_legal_call(call_probs, env)
+	legal_call_probs = filter_legal_calls(call_probs, env)
 	
 	return [legal_card_probs, legal_call_probs, trump_probs]
+
+def norm(arr):
+	return arr/sum(arr)
 
 
 def calculate_estimations_over_steps(tricks):

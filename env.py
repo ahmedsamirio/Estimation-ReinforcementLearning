@@ -28,6 +28,7 @@ class Estimation:
 		self.state_func = state_func
 		self.players = players
 
+
 	def reset(self):
 		# game record
 		self.record = {}
@@ -55,9 +56,6 @@ class Estimation:
 		self.order = 0
 		self.round = 0
 
-		# initialize observation and action space
-		self.observation_space = Observation(self, self.state_func)
-		self.action_space = Action(self)
 
 		# done flag, phase 1 flag, phase 2 flag and phase 3 flag
 		self.done = False
