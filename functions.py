@@ -76,7 +76,7 @@ def change_state(env):
 
 
 
-def filter_legal_actions(card_probs, env):
+def filter_legal_cards(card_probs, env):
     """
     A function which filters out values of cards or probabilities to the legal ones only
     """
@@ -93,6 +93,27 @@ def filter_legal_actions(card_probs, env):
     legal_card_probs = [prob if i in card_tokens else 0 for i, prob in enumerate(card_probs)]
 
     return legal_card_probs
+
+
+def filter_legal_calls(call_probs, info):
+	"""
+	A function which filters out legal calls
+	"""
+	if info['last_call']:
+		call_probs = [prob for prob in call_probs if prob != info['illegal_call']]
+	
+	return call_probs
+
+
+def process_action(action, env, info):
+	"""
+	A function which filter out the legal actions
+	"""
+	card_probs, call_probs, trump_probs = action
+	legal_card_probs = filter_legal_cards(card_probs, env)
+	legal_call_probs = filter_legal_call(call_probs, env)
+	
+	return [legal_card_probs, legal_call_probs, trump_probs]
 
 
 def calculate_estimations_over_steps(tricks):
