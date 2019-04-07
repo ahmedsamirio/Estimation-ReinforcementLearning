@@ -48,6 +48,10 @@ class Estimation:
 		self.played = []
 		self.total_tricks = 0
 		
+		# initialize observation and action space
+		self.observation_space = Observation(self, state_func)
+		self.action_space = Action(self)
+
 		# table suit and trump suit
 		self.table_suit = ''
 		self.trump_suit = ''
