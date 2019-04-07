@@ -36,18 +36,19 @@ while True:
 ```
 
 To know what's happening in the game, the info dict is provided. It contains information about:
-```
-    1. The current player (current_player) 
-    2. The current player cards (current_player_cards)
-    3. The order of the players (player_order)
-    4. The cards of all player (players_cards, this will be dictionary)
-    5. The players' bids (players_bids)  
-    6. The cards on the table (table)    
-    7. The suit of the table (table_suit) 
-    8. The trump suit (trump_suit) 
-    9. The played cards (played_cards) 
-    10. The scores (scores, which are only updates at the end)
-```    
+   
+    1. The current player ```current_player``` 
+    2. The current player cards ```current_player_cards```
+    3. The order of the players ```player_order```
+    4. The cards of all player ```players_cards``` this will be dictionary
+    5. The players' bids ```players_bids```  
+    6. The cards on the table ```table```    
+    7. The suit of the table ```table_suit``` 
+    8. The trump suit ```trump_suit``` 
+    9. The played cards ```played_cards``` 
+    10. The scores ```scores``` which are only updated at the end
+
+
 Through this info dict, you are able to handcraft the observation the way you want and not stick to the observation supplied by the environment. 
 
 Alternatively, you can pass the instance a function that return the current environment state based on it's attributes. For example, this is the class used by default.
