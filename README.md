@@ -20,7 +20,7 @@ The round ends when players are out of cards.
 More information about scoring can be found here: https://www.jawaker.com/en/rules/estimation
 
 
-## How to use
+## Usage
 The environment was designed to be as close to OpenAI gym as possible. Each simulation will be just one round of a full game, ending with a calculation of scores.
 ```
 import env
@@ -36,34 +36,26 @@ while True:
 ```
 
 To know what's happening in the game, the info dict is provided. It contains information about:
-
-    1. The current player (current_player)
-    
+```
+    1. The current player (current_player) 
     2. The current player cards (current_player_cards)
-    
     3. The order of the players (player_order)
-    
     4. The cards of all player (players_cards, this will be dictionary)
-    
-    5. The players' bids (players_bids)
-    
-    6. The cards on the table (table)
-    
-    7. The suit of the table (table_suit)
-    
-    8. The trump suit (trump_suit)
-    
-    9. The played cards (played_cards)
-    
+    5. The players' bids (players_bids)  
+    6. The cards on the table (table)    
+    7. The suit of the table (table_suit) 
+    8. The trump suit (trump_suit) 
+    9. The played cards (played_cards) 
     10. The scores (scores, which are only updates at the end)
-    
+```    
 Through this info dict, you are able to handcraft the observation the way you want and not stick to the observation supplied by the environment. 
 
-Alternatively, you can pass the class an argument with a function that return the obervation based on the attributes of the environment. For example, this is the class used by default.
+Alternatively, you can pass the instance a function that return the current environment state based on it's attributes. For example, this is the class used by default.
+
 ```
 def change_state(env):
     """
-    A function which return the observation state of the current player
+    A function which return the state of the current player as (63,) tensor
     The first 52 elements [0:52] are label encodings of the cards:
         a) 0 - the card isn't played yet and isn't in hand
         b) 1 - the card is in hand
@@ -142,33 +134,25 @@ def change_state(env):
 This function is elementary, and other functions can be used to make more meaningful represenations of the current state of the environment using other techniques.
 
 The main attributes that you'd want to be using in making a state representation are:
-
-    1. The current player's cards  (self.players_cards[self.current_player()])
-    
+```
+    1. The current player's cards  (self.players_cards[self.current_player()]) 
     2. Cards on the table if any  (self.table)
-    
     3. Previously played cards if any  (self.played_cards)
-    
     4. The current player's bids and collected tricks  (self.bids[self.current_player()], self.tricks[self.current_player()])
-    
     5. Other players' bids and collected tricks  (self.bids, self.tricks)
-    
     6. Table and trump suits  (self.table_suit, self.trump_suit)
-    
     7. The total asked tricks from all players  (self.tricks)
-    
     8. The round no.  (self.round)
-    
     9. The current player order on the table  (self.order)
-
+```
 
 ## Caveats about the environment
 
 ### Players
 
-When you create an instance of the environment, you have two argument which you can provide. The first one is the state function responsible for crafting the current state of the environemnt, and a list of players.
+You can provide two arguments while calling an instance of the environment. The first one is the state function responsible for crafting the current player's state, and a list of players.
 
-The default list supplied is ['A', 'B', 'C', 'D']. Now this is totally optional and you can change it however you like. You can also use multiple neural networks, or only one network for all players. For example:
+The default list supplied is ['A', 'B', 'C', 'D']. This is totally optional and you can change it however you like. You can also use multiple neural networks, or only one network for all players. For example:
 ```
 players = {'Bob': Net(), 'Dick': Net(), 'Gabe': Net(), 'Elmo': Net()}
 env = env.Estimation(players=players.keys())
@@ -198,7 +182,7 @@ while True:
 
 ### Actions
 
-All actions passed to the environment should be tuples of 3 elements. The first element should be the card token, the second is the estimation, and the third is the trump suit token. 
+For simplicity, all actions passed to the environment should be tuples of 3 elements. The first element should be the card token, the second is the estimation, and the third is the trump suit token. 
 
 During the first phase, the 2nd and 3rd element are used. The second phase will only use the 2nd element, and the 3rd will use the first. 
 
@@ -206,7 +190,9 @@ During the first phase, the 2nd and 3rd element are used. The second phase will 
 
 ### Bids 
 
-During the first phase, the bids dictionary will contain (estimation, trump_token) tuples for each player. Therefore you should be wary while using it in the state representation.
+During the first phase, the bids dictionary will contain (estimation, trump_token) tuples for each player. Therefore you should be wary while using it in the state representation. Hence why this line existed in the state function:
+
+```state[52] = env.bids[player] if not isinstance(env.bids[player], list) else 0```
 
 During the second phase, the bids dictionary will only contain the estimation number.
 
@@ -216,3 +202,6 @@ During calling, the last player isn't allowed to call a number that makes the to
 
 You can then tweak the function which return the estimation based on the neural network output, for example, to return only a call from the legal ones.
 
+### Tricks
+
+The tricks are recorded for each player as 0 or 1 in a each round, so the ```self.tricks``` dict will contain lists.
