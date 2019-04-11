@@ -1,7 +1,7 @@
 import env
 
 env = env.Estimation()
-obs, done, info = env.reset()
+obs, info = env.reset()
 while True:
     print(info['current_player'], info['current_player_cards'])
     action = env.action_space.sample()
