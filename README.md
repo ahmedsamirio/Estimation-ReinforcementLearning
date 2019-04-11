@@ -27,7 +27,7 @@ The environment was designed to be as close to OpenAI gym as possible. Each simu
 ```
 import env
 env = env.Estimation()
-obs, done, info = env.reset()
+obs, info = env.reset()
 while True:
     action = env.action_space.sample()
     obs, done, info = env.step(action)
@@ -80,7 +80,7 @@ The default list supplied is ```['A', 'B', 'C', 'D']```. This is totally optiona
 ```
 players = {'Bob': Net(), 'Dick': Net(), 'Gabe': Net(), 'Elmo': Net()}
 env = env.Estimation(players=players.keys())
-obs, done, info = env.reset()
+obs, info = env.reset()
 while True:
     player = info['current_player']
     action = players[player](obs)
@@ -96,7 +96,7 @@ Or
 players = ['Bob', 'Dick', 'Gabe', 'Elmo']
 env = env.Estimation(players=players)
 net = Net()
-obs, done, info = env.reset()
+obs, info = env.reset()
 while True:
     action = net(obs)
     action = process_action(action)
