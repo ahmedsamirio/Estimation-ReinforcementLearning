@@ -77,7 +77,7 @@ class Estimation:
 		self.state = self.observation_space.next()
 
 		# return the observation state for the first player
-		return self.state, self.done, self.update_info()
+		return self.state, self.update_info()
 
 	
 	def step(self, action):
