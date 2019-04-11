@@ -99,8 +99,9 @@ def filter_legal_calls(call_probs, info):
 	"""
 	A function which filters out legal calls
 	"""
-	if info.get('last_call'):
-		call_probs = [prob for prob in call_probs if prob != info['illegal_call']]
+	if 'illegal_call' in info.keys():
+		call_probs = [prob if i != info['illegal_call'] else 0 for i, prob in enumerate(call_probs)]
+		print(call_probs)
 	
 	return call_probs
 
@@ -111,7 +112,7 @@ def process_action(action, env, info):
 	"""
 	card_probs, call_probs, trump_probs = action
 	legal_card_probs = filter_legal_cards(card_probs, env)
-	legal_call_probs = filter_legal_calls(call_probs, env)
+	legal_call_probs = filter_legal_calls(call_probs, info)
 	
 	return [legal_card_probs, legal_call_probs, trump_probs]
 

@@ -1,6 +1,6 @@
 import numpy as np
 import copy
-from collections import defaultdict
+from collections import defaultdict, Counter
 from functions import *
 from spaces import *
 
@@ -180,7 +180,7 @@ class Estimation:
 					self.multi[player].append('dash')
 					self.dash = True  # initialize a dash flag 
 					self.dash_players = list(player)
-				else:
+				elif self.dash and len(self.dash_players) < 2:
 					self.multi[player].append('dash')
 					self.dash_players.append(player)
 
@@ -196,6 +196,7 @@ class Estimation:
 					max_est = bid[0]
 					max_trump = bid[1]
 					highest_player = player
+			
 
 		self.multi[highest_player].append('bidder')  # append bidder multiplier for score calculation
 		self.bids[highest_player] = max_est  # change the bid value to contain only the estimated tricks
@@ -292,9 +293,12 @@ class Estimation:
 			info['last_call'] = True
 			info['illegal_call'] = 13 - self.total_tricks
 
-		if self.phase_1 and len(self.dash_players) == 2:
-			info['last_call'] = True
-			info['illegal_call'] = 0
+
+		if self.phase_1:
+			bids = [bid[0] for bid in self.bids.values() if bid]
+			if Counter(bids)[0] > 1:
+				info['illegal_call'] = 0
+
 		return info
 
 	def update_record(self):
@@ -490,9 +494,9 @@ class Estimation:
 
 			if 'withrisk' in self.multi[player]:
 				if won:
-					self.scores[idx] += 30
+					self.scores[i] += 30
 				else:
-					self.scores[idx] -= 20
+					self.scores[i] -= 20
 
 			if 'withdoublerisk' in self.multi[player]:
 				if won:
