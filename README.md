@@ -85,6 +85,7 @@ while True:
     player = info['current_player']
     action = players[player](obs)
     action = process_action(action)
+    action = policy(action)
     obs, done, info = env.step(action)
     if done:
         break
@@ -99,6 +100,7 @@ obs, done, info = env.reset()
 while True:
     action = net(obs)
     action = process_action(action)
+    action = policy(action)
     obs, done, info = env.step(action)
     if done:
         break
