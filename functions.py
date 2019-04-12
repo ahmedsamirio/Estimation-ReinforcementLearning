@@ -89,8 +89,15 @@ def filter_legal_cards(card_probs, env):
     else:
         legal_cards = player_cards
     cards_tokens = [env.deck.card_to_token[card] for card in legal_cards]
-    # filter card probabilties by their presence in the legal card tokens
+    
+	# filter card probabilties by their presence in the legal card tokens
     legal_card_probs = [prob if i in cards_tokens else 0 for i, prob in enumerate(card_probs)]
+
+	# in case the probability of the last card was zero
+    if sum(legal_card_probs) == 0:
+        for i, x in enumerate(legal_card_probs):
+            if isinstance(x, float):
+                legal_card_probs[i] = 1.0
 
     return legal_card_probs
 
