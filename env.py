@@ -209,6 +209,7 @@ class Estimation:
 		self.reorder_players(highest_player)
 		self.reinitialize_bids(highest_player)
 		self.last_player = 3
+		self.order = 1
 
 		# reinitialize order to start phase 2
 		if self.dash:
@@ -228,6 +229,7 @@ class Estimation:
 				dash_players_order = set([self.players.index(player) for player in self.dash_players])
 				players_order = set([1, 2, 3])
 				self.last_player = players_order.difference(dash_players_order).pop()
+				self.order = self.last_player
 
 	def reorder_players(self, winner):
 		"""

@@ -77,29 +77,31 @@ def change_state(env):
 
 
 def filter_legal_cards(card_probs, env):
-    """
-    A function which filters out values of cards or probabilities to the legal ones only
-    """
-    player = env.current_player()
-    player_cards = env.players_cards[player]
-    if env.table_suit:
-        legal_cards = [card for card in player_cards if card[1] == env.table_suit]
-        if not legal_cards:
-            legal_cards = player_cards
-    else:
-        legal_cards = player_cards
-    cards_tokens = [env.deck.card_to_token[card] for card in legal_cards]
-    
+	"""
+	A function which filters out values of cards or probabilities to the legal ones only
+	"""
+	player = env.current_player()
+	player_cards = env.players_cards[player]
+	if env.table_suit:
+		legal_cards = [card for card in player_cards if card[1] == env.table_suit]
+		if not legal_cards:
+		    legal_cards = player_cards
+	else:
+		legal_cards = player_cards
+
+
+	cards_tokens = [env.deck.card_to_token[card] for card in legal_cards]
+
 	# filter card probabilties by their presence in the legal card tokens
-    legal_card_probs = [prob if i in cards_tokens else 0 for i, prob in enumerate(card_probs)]
+	legal_card_probs = [prob if i in cards_tokens else 0 for i, prob in enumerate(card_probs)]
 
 	# in case the probability of the last card was zero
-    if sum(legal_card_probs) == 0:
-        for i, x in enumerate(legal_card_probs):
-            if isinstance(x, float):
-                legal_card_probs[i] = 1.0
+	if sum(legal_card_probs) == 0:
+		for i, x in enumerate(legal_card_probs):
+		    if isinstance(x, float):
+		        legal_card_probs[i] = 1.0
 
-    return legal_card_probs
+	return legal_card_probs
 
 
 def filter_legal_calls(call_probs, info):
@@ -108,7 +110,7 @@ def filter_legal_calls(call_probs, info):
 	"""
 	if 'illegal_call' in info.keys():
 		call_probs = [prob if i != info['illegal_call'] else 0 for i, prob in enumerate(call_probs)]
-		print(call_probs)
+
 	
 	return call_probs
 
