@@ -225,6 +225,7 @@ class Estimation:
 					self.last_player = 3
 				elif dash_player_order == 3:
 					self.last_player = 2
+					self.dash_skip = 3
 			else:
 				dash_players_order = set([self.players.index(player) for player in self.dash_players])
 				players_order = set([1, 2, 3])
