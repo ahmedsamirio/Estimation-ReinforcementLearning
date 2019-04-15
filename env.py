@@ -440,7 +440,7 @@ class Estimation:
 					if outcome == 0:
 						self.multi[player].append('onlylose')
 
-	def update_scores(self):
+	def update_scores(self, reward=False):
 		"""
 		A method which updates scores after the end of the game according to tricks and multipliers
     	"""
@@ -449,11 +449,12 @@ class Estimation:
 		Y = np.zeros(4)  # extra points
 		Z = np.ones(4)  # bidding multipliers
 		won = False
-
+		scores = defaultdict()
+		tricks = self.bids if reward else self.tricks
 
 		for i, player in enumerate(self.players):  # Main points
 			player_estimated = self.bids[player]
-			player_actual = sum(self.tricks[player])
+			player_actual = sum(tricks[player])
 			if player_actual == player_estimated:
 				X[i] += player_estimated
 				won = True
@@ -525,6 +526,7 @@ class Estimation:
 		scores = (X + Y) * Z + (X + Y) * (Z - 1)
 		for i, score in enumerate(scores):
 			player = self.players[i]
-			self.scores[player] = score
+			scores[player] = score
+		return scores
 
 

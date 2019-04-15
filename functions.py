@@ -148,3 +148,36 @@ def collective_estimation_calculation(env):
         correct_estimations[player] = calculate_estimations_over_steps(tricks)
 
     return correct_estimations
+
+def reward_functions(env):
+	"""
+	A function which calculates players rewards as potential of their optimistic score
+	"""
+	rewards = defaultdict()
+	# calculate expected score, real score so far and remaining rounds
+	e_scores = env.update_scores(reward=True)
+	scores = env.update_scores()
+	r_rounds = 13 - env.round
+
+	for player in env.players:
+		# calculate remianing tricks
+		r_tricks = env.bids[player] - sum(env.tricks[player])
+		
+		# if the remaining rounds suffice collecting the remaining tricks
+		if r_rounds > r_tricks:
+			# calculate reward per trick
+			r_p_trick = e_scores[player] / env.bids[player]
+			# calculate rewards as tricks * reward per trick
+			rewards[player] = sum(env.tricks[player]) * r_p_trick
+		
+		# if the remaining rounds don't suffice collecting the remaining tricks
+		elif r_rounds < r_tricks:
+			# assign the players current score as a reward
+			rewards[player] = scores[player]
+		
+		# if the player collected more tricks than estimates
+		elif r_tricks < 0:
+			rewards[player] = scores[player]
+
+	return rewards
+	
