@@ -134,5 +134,12 @@ The tricks are recorded for each player as 0 or 1 in a each round, so the ```sel
 
 The function ```collective_estimation_calculation``` takes the ```self.tricks``` dict, and return another dict with the tricks collected after each step for each player.
 
+### Rewards
+
+The reward function is a state potential function which indicates how close the agent is from the estimation. The reward is positive as long as the agent has enough rounds to collect his tricks, and is equal to ```tricks_collected*rewards_per_trick```,
+where ```reward_per_trick = final_expected_score/number_estimated_tricks```. The reward turns negative when the rounds remaining aren't enough for collecting the estimated tricks, or when the agent collects more tricks than estimated. The reward then becomes the final score if the player finished with the current collected tricks. 
+
+The rewards passed with each step is a dictionary which maps each player to the reward obtained from his last move, hence it is only updated at the end of each round.
+
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
