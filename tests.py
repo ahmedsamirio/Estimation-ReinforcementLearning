@@ -153,7 +153,36 @@ class TestEstimation(unittest.TestCase):
 		card_probs[1] = 0.0
 		card_probs = filter_legal_cards(card_probs, env)
 		self.assertEqual(card_probs[1], 1.0)
-		print(card_probs)
+
+
+	def test_reward_system(self):
+		env = Estimation(players=list('ABCD'))
+		_, _ = env.reset()
+		env.bids['A'] = 6
+		env.bids['B'] = 3
+		env.bids['C'] = 5
+		env.bids['D'] = 0
+		env.multi['A'] = ['bidder']
+		env.multi['B'] = ['regular']
+		env.multi['C'] = ['regular']
+		env.multi['D'] = ['nocall']
+		env.tricks['A'] = [0, 1, 0, 1, 0, 0, 0, 0, 1]
+		env.tricks['B'] = [0, 0, 1, 0, 1, 0, 0, 0, 0]
+		env.tricks['C'] = [0, 0, 0, 0, 0, 0, 1, 1, 0]
+		env.tricks['D'] = [1, 0, 0, 0, 0, 0, 0, 0, 0]
+		rewards = calculate_rewards(env)
+		self.assertEqual(int(rewards['B']), 8)
+		self.assertEqual(rewards['D'], -11)
+		
+		env.tricks['A'] = [0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0]
+		env.tricks['B'] = [0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0]
+		env.tricks['C'] = [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
+		env.tricks['D'] = [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1]
+		env.round = 11
+		rewards = calculate_rewards(env)
+		self.assertEqual(int(rewards['A']), 17)
+		self.assertEqual(int(rewards['C']), -3)
+		self.assertEqual(int(rewards['D']), -12) 
 		
 
 

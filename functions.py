@@ -1,4 +1,5 @@
 import numpy as np
+from collections import defaultdict
 
 def change_state(env):
     """
@@ -85,7 +86,7 @@ def filter_legal_cards(card_probs, env):
 	if env.table_suit:
 		legal_cards = [card for card in player_cards if card[1] == env.table_suit]
 		if not legal_cards:
-		    legal_cards = player_cards
+			legal_cards = player_cards
 	else:
 		legal_cards = player_cards
 
@@ -97,9 +98,8 @@ def filter_legal_cards(card_probs, env):
 
 	# in case the probability of the last card was zero
 	if sum(legal_card_probs) == 0:
-		for i, x in enumerate(legal_card_probs):
-		    if isinstance(x, float):
-		        legal_card_probs[i] = 1.0
+		left_card_token = env.deck.card_to_token[player_cards[0]]
+		legal_card_probs[left_card_token] = 1.0
 
 	return legal_card_probs
 
@@ -126,7 +126,8 @@ def process_action(action, env, info):
 	return [legal_card_probs, legal_call_probs, trump_probs]
 
 def norm(arr):
-	return arr/sum(arr)
+    arr = np.array(arr, dtype=float)
+    return arr/sum(arr)
 
 
 def calculate_estimations_over_steps(tricks):
@@ -149,7 +150,7 @@ def collective_estimation_calculation(env):
 
     return correct_estimations
 
-def reward_functions(env):
+def calculate_rewards(env):
 	"""
 	A function which calculates players rewards as potential of their optimistic score
 	"""
@@ -164,9 +165,13 @@ def reward_functions(env):
 		r_tricks = env.bids[player] - sum(env.tricks[player])
 		
 		# if the remaining rounds suffice collecting the remaining tricks
-		if r_rounds > r_tricks:
+		if r_rounds >= r_tricks:
 			# calculate reward per trick
-			r_p_trick = e_scores[player] / env.bids[player]
+			if env.bids[player] != 0:
+				r_p_trick = e_scores[player] / env.bids[player]
+			else:
+				r_p_trick = scores[player]
+
 			# calculate rewards as tricks * reward per trick
 			rewards[player] = sum(env.tricks[player]) * r_p_trick
 		
@@ -176,7 +181,7 @@ def reward_functions(env):
 			rewards[player] = scores[player]
 		
 		# if the player collected more tricks than estimates
-		elif r_tricks < 0:
+		if r_tricks < 0:
 			rewards[player] = scores[player]
 
 	return rewards

@@ -36,11 +36,12 @@ class Estimation:
 		# deck of cards
 		self.deck = Cards()
 
-		# players bids, tricks, score multipliers and scores
+		# players bids, tricks, score multipliers, scores and rewards
 		self.bids = defaultdict(list)
 		self.tricks = defaultdict(list)
 		self.multi = defaultdict(list)
 		self.scores = defaultdict(int)
+		self.rewards = defaultdict(int)
 
 		# each player's cards, table cards, previously played cards and total called tricks
 		self.players_cards = defaultdict(list)
@@ -110,7 +111,7 @@ class Estimation:
 			self.state = self.observation_space.next()
 			info = self.update_info()
 
-			return self.state, self.done, info
+			return self.state, self.rewards, self.done, info
 
 		# Phase 2
 		elif self.phase_2:
@@ -135,7 +136,7 @@ class Estimation:
 			self.state = self.observation_space.next()
 			info = self.update_info()
 
-			return self.state, self.done, info
+			return self.state, self.rewards, self.done, info
 
 		# Phase 3
 		elif self.phase_3:
@@ -151,17 +152,18 @@ class Estimation:
 				self.update_record()
 				self.reorder_players(winner)
 				self.empty_table()
+				self.rewards = calculate_rewards(self)
 
 			if self.round == 13:
 				self.done = True
 				self.post_game_multi()
-				self.update_scores()
+				self.scores = self.update_scores()
 				self.record['scores'] = self.scores  # add the final score the game record
 
 			self.state = self.observation_space.next()
 			info = self.update_info()
 
-			return self.state, self.done, info 
+			return self.state, self.rewards, self.done, info 
 
 
 	def select_highest_bid(self):
@@ -454,7 +456,7 @@ class Estimation:
 
 		for i, player in enumerate(self.players):  # Main points
 			player_estimated = self.bids[player]
-			player_actual = sum(tricks[player])
+			player_actual = sum(tricks[player]) if not reward else tricks[player]
 			if player_actual == player_estimated:
 				X[i] += player_estimated
 				won = True
@@ -523,8 +525,8 @@ class Estimation:
 			if '>=8' in self.multi[player]:
 				Z[i] = 2
 
-		scores = (X + Y) * Z + (X + Y) * (Z - 1)
-		for i, score in enumerate(scores):
+		scores_arr = (X + Y) * Z + (X + Y) * (Z - 1)
+		for i, score in enumerate(scores_arr):
 			player = self.players[i]
 			scores[player] = score
 		return scores
