@@ -30,7 +30,7 @@ env = env.Estimation()
 obs, info = env.reset()
 while True:
     action = env.action_space.sample()
-    obs, done, info = env.step(action)
+    obs, rewards, done, info = env.step(action)
     
     if done:
         print(env.scores)
@@ -86,7 +86,7 @@ while True:
     action = players[player](obs)
     action = process_action(action)
     action = policy(action)
-    obs, done, info = env.step(action)
+    obs, rewards, done, info = env.step(action)
     if done:
         break
 ```     
@@ -101,7 +101,7 @@ while True:
     action = net(obs)
     action = process_action(action)
     action = policy(action)
-    obs, done, info = env.step(action)
+    obs, rewards, done, info = env.step(action)
     if done:
         break
 ```
